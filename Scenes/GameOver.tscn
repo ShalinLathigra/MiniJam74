@@ -1,0 +1,159 @@
+[gd_scene load_steps=17 format=2]
+
+[ext_resource path="res://Scenes/GameOver.gd" type="Script" id=1]
+[ext_resource path="res://Players.ttf" type="DynamicFontData" id=2]
+[ext_resource path="res://Resources/PlayersFont.tres" type="DynamicFont" id=3]
+[ext_resource path="res://icon.png" type="Texture" id=4]
+[ext_resource path="res://Scenes/Components/WorldEnvironment.tscn" type="PackedScene" id=5]
+
+[sub_resource type="Shader" id=1]
+code = "shader_type canvas_item;
+
+uniform sampler2D n1;
+uniform sampler2D n2;
+uniform sampler2D n3;
+uniform sampler2D n4;
+
+uniform vec4 c1 : hint_color;
+uniform vec4 c2 : hint_color;
+uniform vec4 c3 : hint_color;
+
+uniform float c12_step = 0.1;
+uniform float c23_step = 0.9;
+
+void fragment(){
+	
+	vec2 alt_1 = UV + vec2(
+		texture(n1, vec2(UV.x + cos(TIME * .1), UV.y - sin(TIME * 0.05))).x,
+		 texture(n3, UV).y);
+	vec2 alt_2 = UV + vec2(
+		texture(n2, vec2(UV.y + sin(TIME * .05), UV.x - cos(TIME * 0.1))).y,
+		 texture(n1, UV).x);
+	
+	float composite_noise = (texture(n1, alt_1) * 0.1 + texture(n2, -alt_1) * 0.2 + texture(n3, UV) * 0.3 + texture(n4, UV) * 0.4).r;
+	
+	// Can use step on a n4, then interpolate on that value between two colors
+	float c12_interp = step(texture(n4, alt_2).r, c12_step + sin(TIME) * 0.25);
+	float c23_interp = step(texture(n4, alt_2).r, c23_step - cos(TIME) * 0.05);
+	
+	COLOR = (((1.0-c12_interp) * c1 + c12_interp * c2) * (1.0-c23_interp) + (c23_interp) * c3);
+	
+	//COLOR = vec4(vec3(c12_interp), 2.0);
+}"
+
+[sub_resource type="OpenSimplexNoise" id=2]
+period = 16.0
+
+[sub_resource type="NoiseTexture" id=3]
+noise = SubResource( 2 )
+
+[sub_resource type="OpenSimplexNoise" id=4]
+period = 32.0
+
+[sub_resource type="NoiseTexture" id=5]
+noise = SubResource( 4 )
+
+[sub_resource type="OpenSimplexNoise" id=6]
+
+[sub_resource type="NoiseTexture" id=7]
+noise = SubResource( 6 )
+
+[sub_resource type="OpenSimplexNoise" id=8]
+period = 128.0
+
+[sub_resource type="NoiseTexture" id=9]
+noise = SubResource( 8 )
+
+[sub_resource type="ShaderMaterial" id=10]
+shader = SubResource( 1 )
+shader_param/c1 = Color( 0.0627451, 0, 0, 1 )
+shader_param/c2 = Color( 0.207843, 0, 0, 1 )
+shader_param/c3 = Color( 0.607843, 0, 0, 1 )
+shader_param/c12_step = 0.45
+shader_param/c23_step = 0.19
+shader_param/n1 = SubResource( 3 )
+shader_param/n2 = SubResource( 5 )
+shader_param/n3 = SubResource( 7 )
+shader_param/n4 = SubResource( 9 )
+
+[sub_resource type="DynamicFont" id=11]
+size = 23
+outline_size = 2
+outline_color = Color( 0.6, 0.580392, 0, 1 )
+font_data = ExtResource( 2 )
+
+[node name="Control" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TextureRect" type="TextureRect" parent="."]
+material = SubResource( 10 )
+margin_right = 1033.0
+margin_bottom = 603.0
+texture = ExtResource( 4 )
+expand = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="RichTextLabel" type="RichTextLabel" parent="."]
+margin_left = 344.45
+margin_top = 41.3738
+margin_right = 1038.45
+margin_bottom = 106.374
+custom_fonts/normal_font = ExtResource( 3 )
+text = "Game Over"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Lasted" type="RichTextLabel" parent="."]
+margin_left = 98.0
+margin_top = 144.0
+margin_right = 792.0
+margin_bottom = 172.0
+custom_fonts/normal_font = SubResource( 11 )
+text = "You lasted: "
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Defeated" type="RichTextLabel" parent="."]
+margin_left = 98.0
+margin_top = 175.0
+margin_right = 792.0
+margin_bottom = 203.0
+custom_fonts/normal_font = SubResource( 11 )
+text = "You defeated: "
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="RichTextLabel4" type="RichTextLabel" parent="."]
+margin_left = 98.0
+margin_top = 273.0
+margin_right = 858.0
+margin_bottom = 551.0
+custom_fonts/normal_font = SubResource( 11 )
+text = "Congratulations! I hope you enjoyed playing Typecast.
+
+
+Credits:
+	
+	Font : Vladimir Nikolic at dafont.com
+
+	Art, Code, Sound by Shalin Lathigra 
+	
+	Used: Aseprite, Beepbox.co, and shaders
+	
+	
+Press P to return to menu, X to quit."
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="WorldEnvironment" parent="." instance=ExtResource( 5 )]

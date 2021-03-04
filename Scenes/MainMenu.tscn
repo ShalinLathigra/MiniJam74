@@ -1,0 +1,56 @@
+[gd_scene load_steps=7 format=2]
+
+[ext_resource path="res://Scenes/MainMenu.gd" type="Script" id=1]
+[ext_resource path="res://Players.ttf" type="DynamicFontData" id=2]
+[ext_resource path="res://Resources/PlayersFont.tres" type="DynamicFont" id=3]
+[ext_resource path="res://Scenes/Components/Background.tscn" type="PackedScene" id=4]
+[ext_resource path="res://Scenes/Components/WorldEnvironment.tscn" type="PackedScene" id=5]
+
+[sub_resource type="DynamicFont" id=1]
+size = 23
+outline_size = 2
+outline_color = Color( 0.6, 0.580392, 0, 1 )
+font_data = ExtResource( 2 )
+
+[node name="Control" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TextureRect" parent="." instance=ExtResource( 4 )]
+
+[node name="RichTextLabel" type="RichTextLabel" parent="."]
+margin_left = 87.0
+margin_top = 90.1091
+margin_right = 781.0
+margin_bottom = 155.109
+custom_fonts/normal_font = ExtResource( 3 )
+text = "Welcome to Typecast
+"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="RichTextLabel2" type="RichTextLabel" parent="."]
+margin_left = 98.2398
+margin_top = 143.674
+margin_right = 792.24
+margin_bottom = 419.674
+custom_fonts/normal_font = SubResource( 1 )
+text = "
+Press P to start, X to quit.
+
+Type visible characters to prepare an attack
+Complete a \"word\" to destroy an enemy
+
+If your glow dies, you die
+
+Type from the center out!"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="WorldEnvironment" parent="." instance=ExtResource( 5 )]

@@ -1,0 +1,83 @@
+[gd_scene load_steps=12 format=2]
+
+[ext_resource path="res://icon.png" type="Texture" id=1]
+
+[sub_resource type="Shader" id=1]
+code = "shader_type canvas_item;
+
+uniform sampler2D n1;
+uniform sampler2D n2;
+uniform sampler2D n3;
+uniform sampler2D n4;
+
+uniform vec4 c1 : hint_color;
+uniform vec4 c2 : hint_color;
+uniform vec4 c3 : hint_color;
+
+uniform float c12_step = 0.1;
+uniform float c23_step = 0.9;
+
+void fragment(){
+	
+	vec2 alt_1 = UV + vec2(
+		texture(n1, vec2(UV.x + cos(TIME * .1), UV.y - sin(TIME * 0.05))).x,
+		 texture(n3, UV).y);
+	vec2 alt_2 = UV + vec2(
+		texture(n2, vec2(UV.y + sin(TIME * .05), UV.x - cos(TIME * 0.1))).y,
+		 texture(n1, UV).x);
+	
+	float composite_noise = (texture(n1, alt_1) * 0.1 + texture(n2, -alt_1) * 0.2 + texture(n3, UV) * 0.3 + texture(n4, UV) * 0.4).r;
+	
+	// Can use step on a n4, then interpolate on that value between two colors
+	float c12_interp = step(texture(n4, alt_2).r, c12_step + sin(TIME) * 0.25);
+	float c23_interp = step(texture(n4, alt_2).r, c23_step - cos(TIME) * 0.05);
+	
+	COLOR = (((1.0-c12_interp) * c1 + c12_interp * c2) * (1.0-c23_interp) + (c23_interp) * c3);
+	
+	//COLOR = vec4(vec3(c12_interp), 2.0);
+}"
+
+[sub_resource type="OpenSimplexNoise" id=2]
+period = 16.0
+
+[sub_resource type="NoiseTexture" id=3]
+noise = SubResource( 2 )
+
+[sub_resource type="OpenSimplexNoise" id=4]
+period = 32.0
+
+[sub_resource type="NoiseTexture" id=5]
+noise = SubResource( 4 )
+
+[sub_resource type="OpenSimplexNoise" id=6]
+
+[sub_resource type="NoiseTexture" id=7]
+noise = SubResource( 6 )
+
+[sub_resource type="OpenSimplexNoise" id=8]
+period = 128.0
+
+[sub_resource type="NoiseTexture" id=9]
+noise = SubResource( 8 )
+
+[sub_resource type="ShaderMaterial" id=10]
+shader = SubResource( 1 )
+shader_param/c1 = Color( 0, 0, 0, 1 )
+shader_param/c2 = Color( 0.207843, 0, 0.266667, 1 )
+shader_param/c3 = Color( 12, 0, 6, 1 )
+shader_param/c12_step = 0.45
+shader_param/c23_step = 0.19
+shader_param/n1 = SubResource( 3 )
+shader_param/n2 = SubResource( 5 )
+shader_param/n3 = SubResource( 7 )
+shader_param/n4 = SubResource( 9 )
+
+[node name="TextureRect" type="TextureRect"]
+material = SubResource( 10 )
+margin_right = 1033.0
+margin_bottom = 603.0
+texture = ExtResource( 1 )
+expand = true
+__meta__ = {
+"_edit_use_anchors_": false
+}

@@ -1,0 +1,121 @@
+[gd_scene load_steps=21 format=2]
+
+[ext_resource path="res://Resources/SpriteFrames/Space.tres" type="SpriteFrames" id=1]
+[ext_resource path="res://Scenes/Components/Monsters/Segment.gd" type="Script" id=2]
+[ext_resource path="res://bop.wav" type="AudioStream" id=3]
+[ext_resource path="res://star_0.png" type="Texture" id=4]
+[ext_resource path="res://star_2.png" type="Texture" id=5]
+
+[sub_resource type="BoxShape" id=1]
+extents = Vector3( 0.32, 1, 0.32 )
+
+[sub_resource type="Gradient" id=2]
+colors = PoolColorArray( 4, 4, 0, 1, 4, 0.3, 0, 1 )
+
+[sub_resource type="GradientTexture" id=3]
+gradient = SubResource( 2 )
+
+[sub_resource type="Curve" id=4]
+max_value = 0.5
+_data = [ Vector2( 0, 0.161932 ), 0.0, 0.0, 0, 0, Vector2( 0.506329, 0.425568 ), 0.0, 0.0, 0, 0, Vector2( 1, 0.225568 ), 0.0, 0.0, 0, 0 ]
+
+[sub_resource type="CurveTexture" id=5]
+curve = SubResource( 4 )
+
+[sub_resource type="ParticlesMaterial" id=6]
+spread = 180.0
+gravity = Vector3( 0, 0, 0 )
+initial_velocity = 2.0
+angular_velocity_random = 1.0
+radial_accel = -2.0
+radial_accel_random = 1.0
+scale_curve = SubResource( 5 )
+color_ramp = SubResource( 3 )
+hue_variation = 1.0
+hue_variation_random = 1.0
+
+[sub_resource type="SpatialMaterial" id=7]
+flags_transparent = true
+vertex_color_use_as_albedo = true
+albedo_color = Color( 10, 10, 10, 1 )
+albedo_texture = ExtResource( 4 )
+
+[sub_resource type="QuadMesh" id=8]
+material = SubResource( 7 )
+
+[sub_resource type="Gradient" id=9]
+offsets = PoolRealArray( 0, 0.994872 )
+colors = PoolColorArray( 5, 3, 0, 1, 5, 5, 0, 1 )
+
+[sub_resource type="GradientTexture" id=10]
+gradient = SubResource( 9 )
+
+[sub_resource type="Curve" id=11]
+_data = [ Vector2( 0, 0.322727 ), 0.0, 2.31414, 0, 0, Vector2( 1, 0.395455 ), -0.854978, 0.0, 0, 0 ]
+
+[sub_resource type="CurveTexture" id=12]
+curve = SubResource( 11 )
+
+[sub_resource type="ParticlesMaterial" id=13]
+direction = Vector3( 0, 0, 0 )
+spread = 180.0
+gravity = Vector3( 0, 0, 0 )
+initial_velocity = 3.0
+angular_velocity = 180.0
+angular_velocity_random = 1.0
+damping = 1.0
+scale_random = 1.0
+scale_curve = SubResource( 12 )
+color_ramp = SubResource( 10 )
+hue_variation = 1.0
+hue_variation_random = 1.0
+anim_offset = 1.0
+anim_offset_random = 1.0
+
+[sub_resource type="SpatialMaterial" id=14]
+flags_transparent = true
+vertex_color_use_as_albedo = true
+params_billboard_mode = 3
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
+albedo_color = Color( 15, 15, 15, 1 )
+albedo_texture = ExtResource( 5 )
+
+[sub_resource type="QuadMesh" id=15]
+material = SubResource( 14 )
+
+[node name="Segment" type="Area"]
+collision_mask = 0
+script = ExtResource( 2 )
+
+[node name="Sprite" type="AnimatedSprite3D" parent="."]
+pixel_size = 0.05
+axis = 1
+frames = ExtResource( 1 )
+animation = "Idle"
+
+[node name="CollisionShape" type="CollisionShape" parent="."]
+shape = SubResource( 1 )
+
+[node name="Particles" type="Particles" parent="."]
+transform = Transform( 1, 0, 0, 0, -1.62921e-07, 1, 0, -1, -1.62921e-07, 0, 0, 0 )
+emitting = false
+amount = 32
+one_shot = true
+explosiveness = 1.0
+process_material = SubResource( 6 )
+draw_pass_1 = SubResource( 8 )
+
+[node name="DeathParticles" type="Particles" parent="."]
+transform = Transform( 0.999976, -0.006894, -1.12318e-09, 0, -1.62921e-07, 1, -0.006894, -0.999976, -1.62917e-07, 0, 0, 0 )
+emitting = false
+amount = 32
+one_shot = true
+explosiveness = 1.0
+process_material = SubResource( 13 )
+draw_pass_1 = SubResource( 15 )
+
+[node name="BadPlayer" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource( 3 )
+unit_db = 80.0
